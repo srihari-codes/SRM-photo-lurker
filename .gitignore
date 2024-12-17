@@ -1,0 +1,8 @@
+BOT_TOKEN.env
+user_data.json
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.DS_Store
