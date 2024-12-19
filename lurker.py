@@ -66,7 +66,6 @@ async def dobVerifier(session, regno, dob):
     data = {"pageAction": "3", "regno": regno, "dob": dob}
     async with session.post(url, headers=headers, data=data, ssl=False) as response:
         text = await response.text()
-        #print(dob)
         return "Invalid data, please check with correct information!" not in text
 
 
@@ -91,21 +90,18 @@ async def dob_finder(regno, date, date_format="%d/%m/%Y") -> str:
 
 # Extracting student id from the response
 def extract_student_id(paragraph):
-    #print("Extracting student ID")
     match = re.search(r"studentid:\s*(\d+)", paragraph)
     return match.group(1) if match else None
 
 
 # Extracting filename from the response
 def extract_image_filename(paragraph):
-    #print("Extracting image filename")
     match = re.search(r"funReloadImage\('([\w\d]+\.\w+)'\)", paragraph)
     return match.group(1) if match else None
 
 
 #Extracting user-id
 async def id_giver(regno, dob, user_id, session):
-    #print("Fetching ID")
     url = "https://erpsrm.com/srmhonline/valliammai/transaction/feepayment.jsp"
     headers = {
         "accept": "text/html, */*; q=0.01",
@@ -121,13 +117,11 @@ async def id_giver(regno, dob, user_id, session):
         studid = extract_student_id(text)
         session_id = session.cookie_jar.filter_cookies(URL(url)).get("JSESSIONID")
         user_data[user_id] = {"studid": studid, "session_id": session_id}
-        #print(session_id)
         save_user_data()
 
 
 # Extracting file
 async def file_giver(studid, session):
-    #print("Fetching file")
     url = "https://erpsrm.com/srmhonline/valliammai/transaction/feepayment.jsp"
     session_id = str(session.cookie_jar.filter_cookies(URL(url)).get("JSESSIONID"))
     cookie_value = session_id.split("JSESSIONID=")[1]
@@ -147,7 +141,6 @@ async def file_giver(studid, session):
 
 # Sending image to user
 async def send_image_from_url(update, context, url, message_id):
-    #print("Sending image")
     try:
         # Fetch the image from the URL
         async with aiohttp.ClientSession() as session:
@@ -235,12 +228,8 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if stage == "awaiting_registration":
         user_data[user_id]["registration_number"] = text
         user_data[user_id]["stage"] = ""
-
-        #print(user_id)
-        if text == "142223128047":
-            await update.message.reply_text("So, you wanna stab me with my own knife. huh?!")
         
-        elif text[:4] == "1422" and len(text) == 12:
+        if text[:4] == "1422" and len(text) == 12:
             try:
                 int(text)
                 message = await update.message.reply_animation(animation="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExdzZ3aTdnYnk1aDczOHpzMGJ4cWk5anM3dWgxMnl5ODJ6MjZrNW9hdyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l3nWhI38IWDofyDrW/giphy.gif")
